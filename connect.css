@@ -1,0 +1,67 @@
+.grid  {
+    width: 714px;
+    height: 714px;
+    border-left: solid black 5px;
+    border-right: solid black 5px;
+    border-bottom: solid black 5px;;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.square {
+    width: 100px;
+    height: 100px;
+    border: solid black 1px;
+}
+
+.square:nth-child(1) {
+    border-bottom: solid black 5px;
+}
+
+.square:nth-child(2) {
+    border-bottom: solid black 5px;
+}
+
+.square:nth-child(3) {
+    border-bottom: solid black 5px;
+}
+
+.square:nth-child(4) {
+    border-bottom: solid black 5px;
+}
+
+.square:nth-child(5) {
+    border-bottom: solid black 5px;
+}
+
+.square:nth-child(6) {
+    border-bottom: solid black 5px;
+}
+
+.square:nth-child(7) {
+    border-bottom: solid black 5px;
+}
+
+.turn {
+    width: 100px;
+    height: 100px;
+    border: none;
+
+}
+
+.red {
+    background-color: red;
+    
+}
+
+.yellow {
+    background: yellow;
+}
+
+.piece {
+    border-radius: 50px;
+}
+
+.hidden {
+    border: none;
+}
