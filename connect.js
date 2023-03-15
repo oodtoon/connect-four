@@ -9,6 +9,7 @@ let currentIndex
 const width = 7;
 let pieceIndex = 3;
 let color = "red"
+let isDisabled = false 
 
 
 function createSquare() {
@@ -50,6 +51,9 @@ placeRedPiece();
 
 
 function dropPiece(e) {
+    if (isDisabled) {
+        return;
+    }
     let dropId
     let currentDropIndex = pieceIndex
     function fallingPiece() {
@@ -60,21 +64,23 @@ function dropPiece(e) {
             pieces[currentDropIndex].classList.add("piece")
             pieces[currentDropIndex].classList.add(color)
         }
-        // clear interval
+        if (pieces[currentDropIndex + width].classList.contains("piece")) {
+            clearInterval(dropId);
+            updateGameState();
+        }
+
     }
 
-    switch (e.key) {
-        case "Enter":
-            dropId = setInterval(fallingPiece, 200)
-            pieceIndex = 3
-            updateGameState();
-            break;
-
+    if (e.key === "Enter") {
+        isDisabled = true;
+        dropId = setInterval(fallingPiece, 200)
+        pieceIndex = 3
     }
 }
 
 
 function updateGameState() {
+    isDisabled = false;
     if (turn.textContent === "Red") {
         turn.textContent = "Yellow"
         turn.classList.remove("red")
@@ -95,6 +101,9 @@ function updateGameState() {
 
 
 function movePiece(e) {
+    if (isDisabled) {
+        return;
+    }
     pieces[pieceIndex].classList.remove("piece")
     pieces[pieceIndex].classList.remove(color)
     switch (e.key) {
@@ -115,23 +124,3 @@ function movePiece(e) {
 document.addEventListener("keydown", movePiece)
 document.addEventListener("keydown", dropPiece)
 
-/*grid.addEventListener("click", function (e) {
-    if (turn.textContent === "Red" && e.target.classList.contains("red") != true && e.target.classList.contains("yellow") != true) {
-        e.target.classList.add("red");
-        turn.textContent = "Yellow"
-        currentIndex = e.target.id
-        pieces[currentIndex].classList.add("red");
-        turn.classList.add("yellow")
-
-    } else if (turn.textContent === "Yellow" && e.target.classList.contains("red") != true && e.target.classList.contains("yellow") != true) {
-        e.target.classList.add("yellow")
-        turn.textContent = "Red";
-        turn.classList.remove("yellow")
-        turn.classList.add("red")
-        currentIndex = e.target.id
-        pieces[currentIndex].classList.add("yellow");
-    }
-
-    console.log(currentIndex)
-    console.log(pieces[currentIndex].classList)
-})*/
