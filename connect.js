@@ -9,7 +9,7 @@ let currentIndex
 const width = 7;
 let pieceIndex = 3;
 let color = "red"
-let isDisabled = false 
+let isDisabled = false
 
 
 function createSquare() {
@@ -66,6 +66,11 @@ function dropPiece(e) {
         }
         if (pieces[currentDropIndex + width].classList.contains("piece")) {
             clearInterval(dropId);
+            if (winCheckAll()) {
+                // displayWin();
+                // displayResetBtn();
+                return
+            }
             updateGameState();
         }
 
@@ -73,13 +78,14 @@ function dropPiece(e) {
 
     if (e.key === "Enter") {
         isDisabled = true;
-        dropId = setInterval(fallingPiece, 200)
-        pieceIndex = 3
+        dropId = setInterval(fallingPiece, 50)
+
     }
 }
 
 
 function updateGameState() {
+    pieceIndex = 3
     isDisabled = false;
     if (turn.textContent === "Red") {
         turn.textContent = "Yellow"
@@ -124,3 +130,64 @@ function movePiece(e) {
 document.addEventListener("keydown", movePiece)
 document.addEventListener("keydown", dropPiece)
 
+//win conditions
+//4 in a row horiz, vert, diag
+//if any are the same we know the game is over
+//we can check those squares
+//from any given square, you can check if there is 4 right, 4 above, 4 diag right up.
+//run for loop from 0-49 
+//check if there are 4 same colors in a row for each square right, up, up right diag
+//if yes, win and stop iteration -- can use "break" after (if condition is met statement)
+// as long as is less than last square in row
+
+//row Math.floor(index / width) //if row is same keep going 
+//if row is different stop
+//above - width //if >= 7 keep looping
+//if < 7 stop
+//diag - width + 1 //you know it's overflowed when rows match
+//if get row for current index and next index are different keep looping
+//if they are the same than stop
+//if >= 7 keep going
+// if < 7 stop
+//Math.floor(index /)
+
+function getRow(index) {
+    return Math.floor(index / width);
+}
+
+function getColor(index) {
+    const element = pieces[index]
+    if (element === undefined) {
+        return null;
+    }
+    return element.classList.contains("yellow") ? "yellow" : element.classList.contains("red") ? "red" : null
+}
+
+function winCheckRow(index) {
+    let color = getColor(index);
+    let row = getRow(index);
+    for (i = index + 1; i < index + 4; i++) {
+        let nextRow = getRow(i);
+        if (nextRow !== row) {
+            return false;
+        }
+
+        const nextColor = getColor(i);
+        if (!nextColor || color !== nextColor) {
+            return false;
+        }
+        console.log({ color, row, nextColor, nextRow })
+        row = nextRow
+        color = nextColor
+    }
+    return true;
+}
+
+function winCheckAll() {
+    for (let i = 7; i < squares.length; i++) {
+        if (winCheckRow(i)) {
+            return true;
+        }
+    }
+    return false;
+}

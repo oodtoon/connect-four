@@ -26,13 +26,21 @@
 
 }
 
+.inline-block {
+    display: inline-block;
+}
+
 .red {
     background-color: red;
+   
+    
 
 }
 
 .yellow {
     background: yellow;
+    
+  
 }
 
 .piece {
