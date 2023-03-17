@@ -3,6 +3,7 @@ const pieces = []
 
 const grid = document.querySelector(".grid")
 const turn = document.querySelector(".turn")
+const restart = document.getElementById("restart");
 turn.textContent = "Red";
 turn.classList.add("red")
 let currentIndex
@@ -11,6 +12,31 @@ let pieceIndex = 3;
 let color = "red"
 let isDisabled = false
 
+
+
+function displayWin() {
+    turn.textContent = `${color} Wins!`;
+}
+
+function displayResetBtn () {
+    restart.classList.remove("hide");
+}
+
+restart.addEventListener("click", function () {
+    pieceIndex = 3;
+    isDisabled = false;
+    turn.textContent = "Red";
+    turn.classList.remove("yellow")
+    turn.classList.add("red")
+    color = "red"
+    restart.classList.add("hide");
+    for (let i = 7; i < 49; i++) {
+        pieces[i].classList.remove("piece")
+        pieces[i].classList.remove("red")
+        pieces[i].classList.remove("yellow")
+    }
+placeRedPiece();
+})
 
 function createSquare() {
     for (let i = 0; i < 49; i++) {
@@ -67,8 +93,8 @@ function dropPiece(e) {
         if (pieces[currentDropIndex + width].classList.contains("piece")) {
             clearInterval(dropId);
             if (winCheckAll()) {
-                // displayWin();
-                // displayResetBtn();
+                displayWin();
+                displayResetBtn();
                 return
             }
             updateGameState();
@@ -142,8 +168,10 @@ document.addEventListener("keydown", dropPiece)
 
 //row Math.floor(index / width) //if row is same keep going 
 //if row is different stop
-//above - width //if >= 7 keep looping
-//if < 7 stop
+
+//above - width //if index >= 7 keep looping
+//if index < 7 stop
+
 //diag - width + 1 //you know it's overflowed when rows match
 //if get row for current index and next index are different keep looping
 //if they are the same than stop
@@ -166,7 +194,7 @@ function getColor(index) {
 function winCheckRow(index) {
     let color = getColor(index);
     let row = getRow(index);
-    for (i = index + 1; i < index + 4; i++) {
+    for (let i = index + 1; i < index + 4; i++) {
         let nextRow = getRow(i);
         if (nextRow !== row) {
             return false;
@@ -183,11 +211,60 @@ function winCheckRow(index) {
     return true;
 }
 
+function winCheckDiag(index) {
+    let color = getColor(index);
+    let row = getRow(index);
+    for (let i = index - 6; i > index - 24; i -=6) {
+        let nextRow = getRow(i);
+        if (nextRow === row) {
+            return false;
+        }
+        let nextColor = getColor(i);
+        if (!nextColor || color !== nextColor) {
+            return false;
+        }
+        row = nextRow
+        color = nextColor
+    }
+return true;
+}
+
+function getColumn(index) {
+    return index - 7;
+}
+
+function winCheckColumn(index) {
+    let color = getColor(index);
+    let column = getColumn(index);
+    for (let i = index - 7; i > index - 28; i -= 7) {
+            let nextColumn = getColumn(i)
+            if (nextColumn < 7 && nextColumn > 49) {
+                return false;
+            }
+            let nextColor = getColor(i)
+            if (!nextColor || color !== nextColor) {
+                return false;
+            }
+        column = nextColumn   
+        color = nextColor
+        }
+return true;
+}
+
 function winCheckAll() {
     for (let i = 7; i < squares.length; i++) {
         if (winCheckRow(i)) {
             return true;
         }
+    }
+    for (let i = 7; i < 49; i++) {
+        if (winCheckColumn(i)) {
+            return true;
+        }
+    }
+    for (let i = 7; i < 49; i++) {
+        if (winCheckDiag(i))
+        return true;
     }
     return false;
 }

@@ -50,3 +50,7 @@
 .hidden {
     border: none;
 }
+
+.hide {
+    display: none;
+}
