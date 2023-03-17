@@ -18,7 +18,7 @@ function displayWin() {
     turn.textContent = `${color} Wins!`;
 }
 
-function displayResetBtn () {
+function displayResetBtn() {
     restart.classList.remove("hide");
 }
 
@@ -35,7 +35,7 @@ restart.addEventListener("click", function () {
         pieces[i].classList.remove("red")
         pieces[i].classList.remove("yellow")
     }
-placeRedPiece();
+    placeRedPiece();
 })
 
 function createSquare() {
@@ -89,14 +89,22 @@ function dropPiece(e) {
             currentDropIndex += width
             pieces[currentDropIndex].classList.add("piece")
             pieces[currentDropIndex].classList.add(color)
-        }
-        if (pieces[currentDropIndex + width].classList.contains("piece")) {
+        } else {
+
+
             clearInterval(dropId);
+
+            if (currentDropIndex < 7) {
+                isDisabled = false;
+                return;
+            }
             if (winCheckAll()) {
                 displayWin();
                 displayResetBtn();
                 return
             }
+
+
             updateGameState();
         }
 
@@ -211,10 +219,10 @@ function winCheckRow(index) {
     return true;
 }
 
-function winCheckDiag(index) {
+function winCheckDiagRight(index) {
     let color = getColor(index);
     let row = getRow(index);
-    for (let i = index - 6; i > index - 24; i -=6) {
+    for (let i = index - 6; i > index - 24; i -= 6) {
         let nextRow = getRow(i);
         if (nextRow === row) {
             return false;
@@ -226,7 +234,25 @@ function winCheckDiag(index) {
         row = nextRow
         color = nextColor
     }
-return true;
+    return true;
+}
+
+function winCheckDiagLeft(index) {
+    let color = getColor(index);
+    let row = getRow(index);
+    for (let i = index - 8; i > index - 32; i -= 8) {
+        let nextRow = getRow(i);
+        if (nextRow === row - 3) {
+            return false;
+        }
+        let nextColor = getColor(i);
+        if (!nextColor || color !== nextColor) {
+            return false;
+        }
+        row = nextRow
+        color = nextColor
+    }
+    return true;
 }
 
 function getColumn(index) {
@@ -237,18 +263,18 @@ function winCheckColumn(index) {
     let color = getColor(index);
     let column = getColumn(index);
     for (let i = index - 7; i > index - 28; i -= 7) {
-            let nextColumn = getColumn(i)
-            if (nextColumn < 7 && nextColumn > 49) {
-                return false;
-            }
-            let nextColor = getColor(i)
-            if (!nextColor || color !== nextColor) {
-                return false;
-            }
-        column = nextColumn   
-        color = nextColor
+        let nextColumn = getColumn(i)
+        if (nextColumn < 7) {
+            return false;
         }
-return true;
+        let nextColor = getColor(i)
+        if (!nextColor || color !== nextColor) {
+            return false;
+        }
+        column = nextColumn
+        color = nextColor
+    }
+    return true;
 }
 
 function winCheckAll() {
@@ -263,8 +289,16 @@ function winCheckAll() {
         }
     }
     for (let i = 7; i < 49; i++) {
-        if (winCheckDiag(i))
-        return true;
+        if (winCheckDiagRight(i)) {
+            return true;
+        }
+
+    }
+    for (let i = 7; i < 49; i++) {
+        if (winCheckDiagLeft(i)) {
+            return true;
+        }
+
     }
     return false;
 }
